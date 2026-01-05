@@ -4,13 +4,10 @@ import boto3
 from utils import create_response, ErrorMsg
 from pydantic import ValidationError
 from models import UpdateTaskRequest
-from aws_lambda_powertools import Logger
 from botocore.exceptions import ClientError
 
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table(os.environ["TASKS_TABLE_NAME"])
-
-logger = Logger()
 
 def lambda_handler(event, context):
     """
@@ -61,14 +58,11 @@ def lambda_handler(event, context):
         return create_response(200, data=response["Attributes"])
 
     except ClientError as e:
-        logger.error(f"DynamoDB ClientError: {e.response['Error']['Message']}")
         return create_response(400, error=e.response["Error"]["Message"])
 
     except ValidationError as e:
         error_messages = [f"{err['loc'][0]}: {err['msg']}" for err in e.errors()]
-        logger.error(f"ValidationError: {'; '.join(error_messages)}")
         return create_response(400, error="; ".join(error_messages))
     
     except Exception as e:
-        logger.error(f"Unhandled exception: {str(e)}")
         return create_response(500, error=str(e))

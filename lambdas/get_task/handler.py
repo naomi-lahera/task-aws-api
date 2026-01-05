@@ -1,14 +1,11 @@
 import os
 import boto3
 from botocore.exceptions import ClientError
-from aws_lambda_powertools import Logger
 from utils import create_response, ErrorMsg
 
 
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table(os.environ["TASKS_TABLE_NAME"])
-
-logger = Logger()
 
 def lambda_handler(event, context):
     """
@@ -28,9 +25,7 @@ def lambda_handler(event, context):
         return create_response(200, data=item)
     
     except ClientError as e:
-        logger.error(f"DynamoDB ClientError: {e.response['Error']['Message']}")
         return create_response(400, error=e.response["Error"]["Message"])
     
     except Exception as e:
-        logger.error(f"Unhandled exception: {str(e)}")
         return create_response(500, error=str(e))

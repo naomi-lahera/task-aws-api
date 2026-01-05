@@ -67,11 +67,6 @@ The Lambda layers must be created with specific dependencies built for the Lambd
 pip install pydantic==2.9.2 -t lambdas/layers/dependencies/python --platform manylinux2014_x86_64 --only-binary=:all: --python-version 3.11 --implementation cp --upgrade
 ```
 
-**Install AWS Lambda Powertools:**
-```bash
-pip install aws-lambda-powertools -t lambdas/layers/dependencies/python --platform manylinux2014_x86_64 --only-binary=:all: --python-version 3.11 --implementation cp --upgrade
-```
-
 The following will be accomplished by these commands:
 - Packages will be installed to `lambdas/layers/dependencies/python` directory
 
