@@ -1,26 +1,37 @@
 import os
 import json
 import boto3
-from utils import create_response
+from utils import create_response, ErrorMsg
 from pydantic import ValidationError
 from models import UpdateTaskRequest
-import logging
+from aws_lambda_powertools import Logger
 from botocore.exceptions import ClientError
 
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table(os.environ["TASKS_TABLE_NAME"])
-logger = logging.getLogger(__name__)
+
+logger = Logger()
 
 def lambda_handler(event, context):
     """
     Update task
     """
     try:
-        task_id = event.get("pathParameters", {}).get("taskId")
+        task_id = event.get("pathParameters", {}).get("taskId")     
         if not task_id:
-            return create_response(400, {"message": "taskId is required"})
+            return create_response(400, error=ErrorMsg.MISS_ID.value)
 
-        body = json.loads(event.get("body", "{}"))
+        get_task_response = table.get_item(Key={"taskId": task_id})
+        item = get_task_response.get("Item")
+
+        if not item:
+            return create_response(404, message=ErrorMsg.NOT_FOUND.value)
+
+        body_str = event.get("body")
+        if not body_str:
+            return create_response(400, message=ErrorMsg.MISS_BODY.value)
+        
+        body = json.loads(body_str)       
         task_request = UpdateTaskRequest(**body)
 
         update_expression = []
@@ -33,7 +44,7 @@ def lambda_handler(event, context):
             expression_names[f"#{field}"] = field
 
         if not update_expression:
-            return create_response(400, {"message": "No fields to update"})
+            return create_response(400, message=ErrorMsg.NO_FIELDS_TO_UPDATE.value)
 
         update_params = {
             "Key": {"taskId": task_id},
@@ -47,21 +58,17 @@ def lambda_handler(event, context):
 
         response = table.update_item(**update_params)
 
-        return create_response(200, {
-            "message": "Task updated successfully",
-            "task": response["Attributes"]
-        })
+        return create_response(200, data=response["Attributes"])
+
+    except ClientError as e:
+        logger.error(f"DynamoDB ClientError: {e.response['Error']['Message']}")
+        return create_response(400, error=e.response["Error"]["Message"])
 
     except ValidationError as e:
-        return create_response(400, {"errors": e.errors()})
+        error_messages = [f"{err['loc'][0]}: {err['msg']}" for err in e.errors()]
+        logger.error(f"ValidationError: {'; '.join(error_messages)}")
+        return create_response(400, error="; ".join(error_messages))
     
-    except ClientError as err:
-        logger.error(
-            "Couldn't update task %s. Here's why: %s: %s",
-            err.response["Error"]["Code"],
-            err.response["Error"]["Message"],
-        )
-        return create_response(400, {"errors": err.response["Error"]["Message"]})
-
     except Exception as e:
-        return create_response(500, {"message": str(e)})
+        logger.error(f"Unhandled exception: {str(e)}")
+        return create_response(500, error=str(e))

@@ -17,7 +17,7 @@ class CreateTaskRequest(BaseModel):
     """Validation model for creating a task"""
     title: str = Field(..., min_length=1, max_length=255, description="Task title")
     description: str = Field(..., min_length=1, max_length=1000, description="Task description")
-    status: TaskStatus = Field(TaskStatus.PENDING, description="Task status")
+    status: TaskStatus = Field(..., description="Task status")
 
     class Config:
         use_enum_values = True

@@ -36,7 +36,7 @@ class AwsStack(Stack):
         # =======================================
         common_layer = LayerVersion(
             self,
-            "CommonLayer",
+            "TaskAppCommonLayer",
             code=_lambda.Code.from_asset(
                 os.path.join("lambdas", "layers", "common")
             ),
@@ -45,14 +45,14 @@ class AwsStack(Stack):
         )
 
         # Layer de Pydantic
-        pydantic_layer = LayerVersion(
+        dependencies_layer = LayerVersion(
             self,
-            "PydanticLayer",
+            "TaskAppDependenciesLayer",
             code=_lambda.Code.from_asset(
-                os.path.join("lambdas", "layers", "pydantic_layer")
+                os.path.join("lambdas", "layers", "dependencies")
             ),
             compatible_runtimes=[_lambda.Runtime.PYTHON_3_11],
-            description="Pydantic dependencies layer"
+            description="Dependencies layer"
         )
 
 
@@ -69,7 +69,7 @@ class AwsStack(Stack):
             code=_lambda.Code.from_asset(
                 os.path.join("lambdas", "create_task")
             ),
-            layers=[common_layer, pydantic_layer],
+            layers=[common_layer, dependencies_layer],
             environment={
                 "TASKS_TABLE_NAME": self.tasks_table.table_name
             }
@@ -85,7 +85,7 @@ class AwsStack(Stack):
             code=_lambda.Code.from_asset(
                 os.path.join("lambdas", "get_task")
             ),
-            layers=[common_layer],
+            layers=[common_layer, dependencies_layer],
             environment={
                 "TASKS_TABLE_NAME": self.tasks_table.table_name
             }
@@ -101,7 +101,7 @@ class AwsStack(Stack):
             code=_lambda.Code.from_asset(
                 os.path.join("lambdas", "update_task")
             ),
-            layers=[common_layer, pydantic_layer],
+            layers=[common_layer, dependencies_layer],
             environment={
                 "TASKS_TABLE_NAME": self.tasks_table.table_name
             }
@@ -117,12 +117,12 @@ class AwsStack(Stack):
             code=_lambda.Code.from_asset(
                 os.path.join("lambdas", "delete_task")
             ),
-            layers=[common_layer, pydantic_layer],
+            layers=[common_layer, dependencies_layer],
             environment={
                 "TASKS_TABLE_NAME": self.tasks_table.table_name
             }
         )
-        self.tasks_table.grant_write_data(delete_task_lambda)
+        self.tasks_table.grant_read_write_data(delete_task_lambda)
 
 
         # =======================================

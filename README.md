@@ -1,58 +1,139 @@
+# Task Management Service - AWS Serverless App
 
-# Welcome to your CDK Python project!
+A complete serverless application on AWS using AWS CDK with Python. Includes:
+- **REST API** with API Gateway
+- **Lambda functions** for task CRUD operations
+- **DynamoDB** database
+- **Lambda Layers** with shared dependencies
+- **Automatic deployment**
 
-This is a blank project for CDK development with Python.
+## Setup Instructions
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+### Prerequisites
 
-This project is set up like a standard Python project.  The initialization
-process also creates a virtualenv within this project, stored under the `.venv`
-directory.  To create the virtualenv it assumes that there is a `python3`
-(or `python` for Windows) executable in your path with access to the `venv`
-package. If for any reason the automatic creation of the virtualenv fails,
-you can create the virtualenv manually.
+The following must be installed before proceeding:
 
-To manually create a virtualenv on MacOS and Linux:
+- **Python 3.11+**: Download from [python.org](https://www.python.org)
+- **AWS CLI**: Download from [aws.amazon.com/cli](https://aws.amazon.com/cli)
+- **Node.js 14+**: Required by CDK - download from [nodejs.org](https://nodejs.org)
+- **AWS Account**: With configured credentials
 
-```
-$ python -m venv .venv
-```
+### Step 1: Extract the Project
 
-After the init process completes and the virtualenv is created, you can use the following
-step to activate your virtualenv.
+The project must be extracted from the .zip file. The extracted folder should be named `tasks-management-api`:
 
-```
-$ source .venv/bin/activate
-```
+### Step 2: Configure AWS Credentials
 
-If you are a Windows platform, you would activate the virtualenv like this:
+AWS credentials must be configured locally:
 
-```
-% .venv\Scripts\activate.bat
-```
-
-Once the virtualenv is activated, you can install the required dependencies.
-
-```
-$ pip install -r requirements.txt
+```bash
+aws configure
 ```
 
-At this point you can now synthesize the CloudFormation template for this code.
+When prompted, the following information must be provided:
+- **AWS Access Key ID**: Your access key
+- **AWS Secret Access Key**: Your secret key
+- **Default region**: Example: `us-east-1`
+- **Default output format**: Example: `json`
 
+### Step 3: Create Virtual Environment
+
+**Windows (PowerShell):**
+```powershell
+python -m venv venv
+.\venv\Scripts\Activate.ps1
 ```
-$ cdk synth
+
+### Step 4: Install Project Dependencies
+
+The project dependencies must be installed by running:
+
+```bash
+pip install -r requirements.txt
 ```
 
-To add additional dependencies, for example other CDK libraries, just add
-them to your `setup.py` file and rerun the `pip install -r requirements.txt`
-command.
+### Step 5: Install AWS CDK Globally (if not already installed)
 
-## Useful commands
+```bash
+npm install -g aws-cdk
+```
 
- * `cdk ls`          list all stacks in the app
- * `cdk synth`       emits the synthesized CloudFormation template
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk docs`        open CDK documentation
+### Step 6: Create Lambda Layer Dependencies
 
-Enjoy!
+The Lambda layers must be created with specific dependencies built for the Lambda runtime environment. The following commands must be executed:
+
+**Install Pydantic:**
+```bash
+pip install pydantic==2.9.2 -t lambdas/layers/dependencies/python --platform manylinux2014_x86_64 --only-binary=:all: --python-version 3.11 --implementation cp --upgrade
+```
+
+**Install AWS Lambda Powertools:**
+```bash
+pip install aws-lambda-powertools -t lambdas/layers/dependencies/python --platform manylinux2014_x86_64 --only-binary=:all: --python-version 3.11 --implementation cp --upgrade
+```
+
+The following will be accomplished by these commands:
+- Packages will be installed to `lambdas/layers/dependencies/python` directory
+
+## How to Deploy the Solution
+
+### Method 1: Deploy Using CDK Commands
+
+**Step 1: Synthesize the CloudFormation Template**
+
+```bash
+cdk synth
+```
+
+The CloudFormation template must be generated without deploying.
+
+**Step 2: Review Changes (Optional)**
+
+```bash
+cdk diff
+```
+
+Resources that will be created, modified, or deleted must be reviewed.
+
+**Step 3: Deploy the Stack**
+
+```bash
+cdk deploy
+```
+
+The following must occur when deploying:
+1. A summary of resources to be created must be shown
+2. Confirmation must be requested (type `y` to confirm)
+3. The stack must be deployed to the AWS account
+4. Stack outputs must be displayed including API endpoint URL
+
+**Step 4: Verify Deployment**
+
+The CloudFormation stack status must be checked:
+
+```bash
+aws cloudformation describe-stacks --stack-name AwsStack --query "Stacks[0].StackStatus"
+```
+
+The API endpoint must be viewed:
+
+```bash
+aws cloudformation describe-stacks --stack-name AwsStack --query "Stacks[0].Outputs"
+```
+
+## Cleanup
+
+All AWS resources created by the stack must be removed by running:
+
+```bash
+cdk destroy
+```
+
+**Warning**: This action is irreversible and the following will be deleted:
+- API Gateway
+- Lambda functions
+- DynamoDB table
+- Lambda layers
+- IAM roles and policies
+
+Confirmation must be provided by typing `y` when prompted.
