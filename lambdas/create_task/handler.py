@@ -10,7 +10,6 @@ from utils import create_response, ErrorMsg
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table(os.environ["TASKS_TABLE_NAME"])
 
-@logger.inject_lambda_context
 def lambda_handler(event, context):
     """
     Create a new task

@@ -36,13 +36,7 @@ When prompted, the following information must be provided:
 - **Default region**: Example: `us-east-1`
 - **Default output format**: Example: `json`
 
-### Step 3: Create Virtual Environment
-
-**Windows (PowerShell):**
-```powershell
-python -m venv .venv
-.\venv\Scripts\Activate.ps1
-```
+### Step 3: Create  and Activate Virtual Environment
 
 ### Step 4: Install Project Dependencies
 
