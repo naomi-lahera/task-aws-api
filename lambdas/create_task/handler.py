@@ -17,7 +17,7 @@ def lambda_handler(event, context):
     try:
         body_str = event.get("body")
         if not body_str:
-            return create_response(400, message=ErrorMsg.MISS_BODY.value)
+            return create_response(400, error=ErrorMsg.MISS_BODY.value)
 
         body = json.loads(body_str)
         task_request = CreateTaskRequest(**body)

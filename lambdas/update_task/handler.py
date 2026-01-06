@@ -41,7 +41,7 @@ def lambda_handler(event, context):
             expression_names[f"#{field}"] = field
 
         if not update_expression:
-            return create_response(400, message=ErrorMsg.NO_FIELDS_TO_UPDATE.value)
+            return create_response(400, error=ErrorMsg.NO_FIELDS_TO_UPDATE.value)
 
         update_params = {
             "Key": {"taskId": task_id},
