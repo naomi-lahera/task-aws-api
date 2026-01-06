@@ -20,7 +20,7 @@ def lambda_handler(event, context):
         item = response.get("Item")
 
         if not item:
-            return create_response(404, message=ErrorMsg.NOT_FOUND.value)
+            return create_response(404, error=ErrorMsg.NOT_FOUND.value)
         
         return create_response(200, data=item)
     
