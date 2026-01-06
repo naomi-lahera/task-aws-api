@@ -22,11 +22,11 @@ def lambda_handler(event, context):
         item = get_task_response.get("Item")
 
         if not item:
-            return create_response(404, message=ErrorMsg.NOT_FOUND.value)
+            return create_response(404, error=ErrorMsg.NOT_FOUND.value)
 
         body_str = event.get("body")
         if not body_str:
-            return create_response(400, message=ErrorMsg.MISS_BODY.value)
+            return create_response(400, error=ErrorMsg.MISS_BODY.value)
         
         body = json.loads(body_str)       
         task_request = UpdateTaskRequest(**body)
