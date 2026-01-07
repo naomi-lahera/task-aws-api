@@ -22,7 +22,11 @@ The following must be installed before proceeding:
 
 ### Step 1: Extract the Project
 
-The project must be extracted from the .zip file. The extracted folder should be named `task-aws-api`:
+The project must be extracted from the .zip file. The extracted folder should be named `task-aws-api`. Once extracted, you must navigate into the project folder:
+
+```bash
+cd task-aws-api
+```
 
 ### Step 2: Configure AWS Credentials
 
@@ -38,7 +42,7 @@ When prompted, the following information must be provided:
 - **Default region**: Example: `us-east-1`
 - **Default output format**: Example: `json`
 
-### Step 3: Create  and Activate Virtual Environment
+### Step 3: Create and Activate Virtual Environment
 
 ### Step 4: Install Project Dependencies
 
