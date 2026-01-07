@@ -1,5 +1,7 @@
 # Task Management Service - AWS Serverless App
 
+[![GitHub](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/naomi-lahera/todo-aws-api.git)
+
 A complete serverless application on AWS using AWS CDK with Python. Includes:
 - **REST API** with API Gateway
 - **Lambda functions** for task CRUD operations
