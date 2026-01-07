@@ -22,7 +22,7 @@ The following must be installed before proceeding:
 
 ### Step 1: Extract the Project
 
-The project must be extracted from the .zip file. The extracted folder should be named `todo-aws-api-develop`:
+The project must be extracted from the .zip file. The extracted folder should be named `task-aws-api`:
 
 ### Step 2: Configure AWS Credentials
 
