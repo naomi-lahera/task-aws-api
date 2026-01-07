@@ -13,7 +13,7 @@ import os
 from typing import cast
 from constructs import Construct
 
-class AwsStack(Stack):
+class TaskAppStack(Stack):
 
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)

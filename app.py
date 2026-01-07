@@ -3,11 +3,10 @@ import os
 
 import aws_cdk as cdk
 
-from aws.aws_stack import AwsStack
-
+from aws.aws_stack import TaskAppStack
 
 app = cdk.App()
-AwsStack(app, "AwsStack",
+TaskAppStack(app, "TaskAppStack",
     env=cdk.Environment(
         account=os.getenv('CDK_DEFAULT_ACCOUNT'), 
         region=os.getenv('CDK_DEFAULT_REGION')),
