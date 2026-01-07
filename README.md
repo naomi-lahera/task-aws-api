@@ -72,7 +72,7 @@ The following will be accomplished by these commands:
 
 ## How to Deploy the Solution
 
-### Method 1: Deploy Using CDK Commands
+### Deploy Using CDK Commands
 
 **Step 1: Synthesize the CloudFormation Template**
 
@@ -124,3 +124,82 @@ This configuration was chosen for **development environments** where resources c
 These changes must be made in the CDK stack definition before deploying to production to ensure data protection.
 
 Confirmation must be provided by typing `y` when prompted.
+
+## Testing the API
+
+After deploying the stack successfully, the API Gateway endpoint will be displayed in the deployment output. Look for the output named `TaskAppStack.TasksApiEndpointxxxxxxxxx` which will provide a URL in the following format:
+
+```
+https://xxxxxxxxxx.execute-api.xxxxxxxxx.amazonaws.com/prod/
+```
+
+Concatenate `/tasks` to this base URL to form the API endpoint:
+
+```
+https://xxxxxxxxxx.execute-api.xxxxxxxxx.amazonaws.com/prod/tasks
+```
+
+### API Endpoints
+
+The following endpoints are available for task management:
+
+#### 1. Create a Task
+- **Method**: `POST`
+- **URL**: `https://xxxxxxxxxx.execute-api.xxxxxxxxx.amazonaws.com/prod/tasks`
+- **Request Body**:
+```json
+{
+  "title": "Task title",
+  "description": "Task description",
+  "status": "pending"
+}
+```
+- **Valid Status Values**: `pending`, `in-progress`, `completed`
+- **Response** (201 Created):
+```json
+{
+  "taskId": "uuid-generated-id",
+  "title": "Task title",
+  "description": "Task description",
+  "status": "pending"
+}
+```
+
+#### 2. Get a Task
+- **Method**: `GET`
+- **URL**: `https://xxxxxxxxxx.execute-api.xxxxxxxxx.amazonaws.com/prod/tasks/{taskId}`
+- **Response** (200 OK):
+```json
+{
+  "taskId": "uuid-generated-id",
+  "title": "Task title",
+  "description": "Task description",
+  "status": "pending"
+}
+```
+
+#### 3. Update a Task
+- **Method**: `PUT`
+- **URL**: `https://xxxxxxxxxx.execute-api.xxxxxxxxx.amazonaws.com/prod/tasks/{taskId}`
+- **Request Body** (all fields optional):
+```json
+{
+  "title": "Updated title",
+  "description": "Updated description",
+  "status": "in-progress"
+}
+```
+- **Response** (200 OK):
+```json
+{
+  "taskId": "uuid-generated-id",
+  "title": "Updated title",
+  "description": "Updated description",
+  "status": "in-progress"
+}
+```
+
+#### 4. Delete a Task
+- **Method**: `DELETE`
+- **URL**: `https://xxxxxxxxxx.execute-api.xxxxxxxxx.amazonaws.com/prod/tasks/{taskId}`
+- **Response** (204 No Content): Empty response
